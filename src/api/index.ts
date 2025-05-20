@@ -1,45 +1,17 @@
-const { parseArgs } = require('node:util')
-const fs = require('fs')
-const path = require('path')
 
-const {
-  values: { github_token, project_id },
-} = parseArgs({
-  options: {
-    github_token: { type: 'string' },
-    project_id: { type: 'string' },
-  },
-})
 
-const headers = {
-  'Content-Type': 'application/json',
-  Authorization: `Bearer ${github_token}`,
-}
 
-const writeCSV = (items, filename = 'project_issues.csv') => {
-  const header = ['title', 'url', 'currentStatus', 'age']
-  const rows = items.map((item) =>
-    header
-      .map((field) => {
-        // Escape double quotes and wrap fields in quotes
-        const value = item[field] ?? ''
-        return `"${String(value).replace(/"/g, '""')}"`
-      })
-      .join(',')
-  )
-  const csvContent = [header.join(','), ...rows].join('\n')
-  const filePath = path.join(process.cwd(), filename)
-  fs.writeFileSync(filePath, csvContent, { encoding: 'utf8' })
-  console.log(`CSV written to: ${filePath}`)
-}
 
-const getAge = (date) => {
+
+
+const getAge = (date: string) => {
   if (!date) {
     return 'N/A'
   }
   const pastDate = new Date(date)
   const now = new Date()
 
+  // @ts-expect-error - Just moment it later
   const diffMs = now - pastDate
 
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
@@ -50,7 +22,8 @@ const getAge = (date) => {
   return `${diffDays} days, ${diffHours} hours, ${diffMinutes} minutes, ${diffSeconds} seconds`
 }
 
-const mapToDTO = (item) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mapToDTO = (item: any) => {
   if (!item.content || !item.content.title || !item.content.number) {
     // Skip or handle non-issue items
     return null
@@ -60,10 +33,11 @@ const mapToDTO = (item) => {
     url: `https://github.com/${item.content.repository.nameWithOwner}/issues/${item.content.number}`,
     currentStatus: item.fieldValueByName?.name ?? 'N/A',
     age: getAge(item.fieldValueByName?.updatedAt),
+    updatedAt: item.fieldValueByName?.updatedAt,
   }
 }
 
-const query = `
+const getProjectsQuery = `
 query($projectId: ID!, $after: String) {
   node(id: $projectId) {
     ... on ProjectV2 {
@@ -97,23 +71,60 @@ query($projectId: ID!, $after: String) {
 }
 `
 
-async function fetchAllProjectItems() {
+const getProjectIdQuery = `
+  query($projectNumber: Int!, $orgName: String!) {
+    organization(login: $orgName) {
+      projectV2(number: $projectNumber) {
+        id
+      }
+    }
+  }
+`
+
+
+export const getProjectId = async (projectNumber: number, githubToken: string, orgName: string) => {
+
+  const body = JSON.stringify({
+    query: getProjectIdQuery,
+    variables: {
+      projectNumber,
+      orgName,
+    },
+  })
+
+  const res = await fetch('https://api.github.com/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${githubToken}`,
+    },
+    body,
+  })
+  const json = await res.json()
+
+  return json?.data?.organization?.projectV2?.id
+}
+
+export const fetchAllProjectItems = async (projectId: string, githubToken: string)  => {
   let after = null
   let hasNextPage = true
   const allItems = []
 
   while (hasNextPage) {
     const body = JSON.stringify({
-      query,
+      query: getProjectsQuery,
       variables: {
-        projectId: project_id,
+        projectId,
         after,
       },
     })
 
     const res = await fetch('https://api.github.com/graphql', {
       method: 'POST',
-      headers,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${githubToken}`,
+      },
       body,
     })
 
@@ -125,13 +136,5 @@ async function fetchAllProjectItems() {
     after = data.pageInfo.endCursor
   }
 
-  return allItems
+  return allItems.map(mapToDTO).filter(Boolean)
 }
-
-;(async () => {
-  const items = await fetchAllProjectItems()
-  if (items?.length > 0) {
-    const mapped = items.map(mapToDTO).filter(Boolean)
-    writeCSV(mapped)
-  }
-})()
