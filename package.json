@@ -1,0 +1,12 @@
+{
+  "name": "project-issues-status-age",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "Krzysztof Kowalczyk <kowalczykkrzysztof893@gmail.com> (https://github.com/kowalczyk-krzysztof)",
+  "license": "MIT",
+  "description": "A script to fetch and display the status and age of issues from a GitHub project."
+}
