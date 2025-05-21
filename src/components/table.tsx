@@ -52,17 +52,16 @@ export const Table = ({ data }: Props) => {
 
     // TODO: Fix sorting
     const newSortedData = [...data].sort((a, b) => {
-      const aValue = a[id as keyof ProjectItemDTO]
-      const bValue = b[id as keyof ProjectItemDTO]
+      const aValue = a[id as keyof ProjectItemDTO] as string | undefined
+      const bValue = b[id as keyof ProjectItemDTO] as string | undefined
 
       if (id === 'updatedAt') {
-        const aDate = new Date(aValue as string)
-        const bDate = new Date(bValue as string)
-        return direction === 'asc' ? aDate.getTime() - bDate.getTime() : bDate.getTime() - aDate.getTime()
+        const aTime = aValue ? new Date(aValue).getTime() : direction === 'asc' ? Infinity : -Infinity
+        const bTime = bValue ? new Date(bValue).getTime() : direction === 'asc' ? Infinity : -Infinity
+
+        return direction === 'asc' ? aTime - bTime : bTime - aTime
       }
 
-      if (aValue! < bValue!) return direction === 'asc' ? -1 : 1
-      if (aValue! > bValue!) return direction === 'asc' ? 1 : -1
       return 0
     })
 
