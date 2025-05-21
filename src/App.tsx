@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { fetchAllProjectItems, getProjectId } from './api'
-
+import { EuiIcon } from '@elastic/eui'
 
 function App() {
   const [projectNumber, setProjectNumber] = useState('')
@@ -18,6 +18,7 @@ function App() {
         justifyContent: 'center',
       }}>
       <div>
+        <EuiIcon type="arrowLeft"></EuiIcon>
         <label
           style={{
             marginRight: '12px',
