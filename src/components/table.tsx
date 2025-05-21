@@ -57,8 +57,11 @@ export const Table = ({ data }: Props) => {
     setSortedData(newSortedData)
   }
 
-  // Filter the sorted data
-  const filteredData = sortedData.filter((item) => Object.values(item).some((value) => value && value.toString().toLowerCase().includes(query.toLowerCase())))
+  const filteredData = sortedData.filter((item) =>
+    Object.values(item).some(
+      (value) => value && (value.toString().toLowerCase().includes(query.toLowerCase()) || getTime(value).toLowerCase().includes(query.toLowerCase()))
+    )
+  )
 
   return (
     <EuiFlexGroup
@@ -68,7 +71,6 @@ export const Table = ({ data }: Props) => {
         placeholder="Search..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        width={1600}
         isClearable
       />
       <EuiSpacer size="m" />
