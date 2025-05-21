@@ -15,6 +15,23 @@ type Props = {
   data: ProjectItemDTO[]
 }
 
+const getTime = (date?: string) => {
+  if (!date) return 'N/A'
+  const preciseDiff = moment.duration(moment().diff(moment(date)))
+
+  const years = preciseDiff.years()
+  const months = preciseDiff.months()
+  const days = preciseDiff.days()
+
+  const timeAgoParts = []
+
+  if (years) timeAgoParts.push(`${years} year${years > 1 ? 's' : ''}`)
+  if (months) timeAgoParts.push(`${months} month${months > 1 ? 's' : ''}`)
+  if (days) timeAgoParts.push(`${days} day${days > 1 ? 's' : ''}`)
+
+  return timeAgoParts.join(' ') + ' ago'
+}
+
 export const Table = ({ data }: Props) => {
   const [sortedData, setSortedData] = useState(data)
   const [sortingColumns, setSortingColumns] = useState<EuiDataGridSorting['columns']>([{ id: 'updatedAt', direction: 'desc' }])
@@ -70,7 +87,7 @@ export const Table = ({ data }: Props) => {
         const item = sortedData[rowIndex]
         if (!item) return null
         if (columnId === 'updatedAt') {
-          return item ? moment(item.updatedAt).fromNow() : 'N/A'
+          return getTime(item.updatedAt)
         }
         if (columnId === 'url') {
           return (
