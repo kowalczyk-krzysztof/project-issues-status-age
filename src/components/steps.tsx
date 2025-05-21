@@ -6,18 +6,16 @@ import { fetchAllProjectItems, getProjectId } from '../api'
 type Props = {
   data: ProjectItemDTO[]
   setData: (data: ProjectItemDTO[]) => void
+  setIsFetchingData: (isFetching: boolean) => void
+  isFetchingData: boolean
 }
 
-export const Steps = ({
-  data,
-  setData,
-}: Props) => {
+export const Steps = ({ data, setData, setIsFetchingData, isFetchingData }: Props) => {
   const [projectNumber, setProjectNumber] = useState('')
   const [githubToken, setGithubToken] = useState('')
   const [orgName, setOrgName] = useState('')
   const [projectId, setProjectId] = useState('')
   const [isFetchingProjectId, setIsFetchingProjectId] = useState(false)
-  const [isFetchingData, setIsFetchingData] = useState(false)
 
   const handleGetProjectId = async () => {
     setIsFetchingProjectId(true)

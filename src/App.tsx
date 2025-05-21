@@ -6,6 +6,7 @@ import { Table } from './components/table'
 
 function App() {
   const [data, setData] = useState<ProjectItemDTO[]>([])
+  const [isFetchingData, setIsFetchingData] = useState(false)
 
   return (
     <EuiFlexGroup
@@ -17,9 +18,10 @@ function App() {
         <Steps
           data={data}
           setData={setData}
+          setIsFetchingData={setIsFetchingData}
+          isFetchingData={isFetchingData}
         />
       </EuiFlexItem>
-      {/* {data.length > 0 && <Table data={data} />} */}
       <Table data={data} />
     </EuiFlexGroup>
   )

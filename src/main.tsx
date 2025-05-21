@@ -15,6 +15,13 @@ import { icon as EuiIconGrab } from '@elastic/eui/es/components/icon/assets/grab
 import { icon as EuiIconEyeClosed } from '@elastic/eui/es/components/icon/assets/eye_closed'
 import { icon as EuiIconSortLeft } from '@elastic/eui/es/components/icon/assets/sortLeft'
 import { icon as EuiIconSortRight } from '@elastic/eui/es/components/icon/assets/sortRight'
+import { icon as EuiIconSortDown } from '@elastic/eui/es/components/icon/assets/sort_down'
+import { icon as EuiIconSortUp } from '@elastic/eui/es/components/icon/assets/sort_up'
+import { icon as EuiIconSortable } from '@elastic/eui/es/components/icon/assets/sortable'
+import { icon as EuiIconArrowDown } from '@elastic/eui/es/components/icon/assets/arrow_down'
+import { icon as EuiIconArrowUp } from '@elastic/eui/es/components/icon/assets/arrow_up'
+import { icon as EuiIconCross } from '@elastic/eui/es/components/icon/assets/cross'
+import { icon as EuiIconTokenString } from '@elastic/eui/es/components/icon/assets/tokenString'
 
 appendIconComponentCache({
   check: EuiIconCheck,
@@ -29,6 +36,13 @@ appendIconComponentCache({
   eyeClosed: EuiIconEyeClosed,
   sortLeft: EuiIconSortLeft,
   sortRight: EuiIconSortRight,
+  sortDown: EuiIconSortDown,
+  sortUp: EuiIconSortUp,
+  sortable: EuiIconSortable,
+  arrowDown: EuiIconArrowDown,
+  arrowUp: EuiIconArrowUp,
+  cross: EuiIconCross,
+  tokenString: EuiIconTokenString,
 })
 
 createRoot(document.getElementById('root')!).render(

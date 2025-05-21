@@ -1,26 +1,7 @@
-const getAge = (date: string) => {
-  if (!date) {
-    return 'N/A'
-  }
-  const pastDate = new Date(date)
-  const now = new Date()
-
-  // @ts-expect-error - Just moment it later
-  const diffMs = now - pastDate
-
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-  const diffHours = Math.floor((diffMs / (1000 * 60 * 60)) % 24)
-  const diffMinutes = Math.floor((diffMs / (1000 * 60)) % 60)
-  const diffSeconds = Math.floor((diffMs / 1000) % 60)
-
-  return `${diffDays} days, ${diffHours} hours, ${diffMinutes} minutes, ${diffSeconds} seconds`
-}
-
 export type ProjectItemDTO = {
   title: string
   url: string
   currentStatus: string
-  age: string
   updatedAt: string
 }
 
@@ -34,7 +15,6 @@ const mapToDTO = (item: any) => {
     title: item.content.title,
     url: `https://github.com/${item.content.repository.nameWithOwner}/issues/${item.content.number}`,
     currentStatus: item.fieldValueByName?.name ?? 'N/A',
-    age: getAge(item.fieldValueByName?.updatedAt),
     updatedAt: item.fieldValueByName?.updatedAt,
   }
 }
