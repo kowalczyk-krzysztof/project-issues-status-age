@@ -87,6 +87,7 @@ export const Table = ({ data }: Props) => {
         }}
         columns={columns}
         width={1600}
+        height={960}
         rowCount={filteredData.length}
         renderCellValue={({ rowIndex, columnId }) => {
           const item = filteredData[rowIndex]

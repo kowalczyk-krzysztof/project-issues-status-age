@@ -1,3 +1,35 @@
+type GraphQlProjectsNode = {
+  status: {
+    name: string
+    updatedAt: string
+  }
+  queue: {
+    name: string
+  }
+  content: {
+    title: string
+    number: number
+    repository: {
+      nameWithOwner: string
+    }
+    createdAt: string
+  }
+}
+
+type GraphQlProjectsResponse = {
+  data: {
+    node: {
+      items: {
+        pageInfo: {
+          hasNextPage: boolean
+          endCursor: string
+        }
+        nodes: GraphQlProjectsNode[]
+      }
+    }
+  }
+}
+
 export type ProjectItemDTO = {
   title: string
   url: string
@@ -5,15 +37,14 @@ export type ProjectItemDTO = {
   updatedAt: string
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapToDTO = (item: any) => {
+const mapToDTO = (item: GraphQlProjectsNode) => {
   if (!item.content || !item.content.title || !item.content.number || item.status?.name?.includes('Done')) {
     // Skip or handle non-issue items and done items
     return null
   }
   return {
-    title: item.content.title,
-    url: `https://github.com/${item.content.repository.nameWithOwner}/issues/${item.content.number}`,
+    title: item.content?.title ?? 'N/A',
+    url: `https://github.com/${item.content?.repository?.nameWithOwner}/issues/${item.content?.number}`,
     currentStatus: item.status?.name ?? 'N/A',
     updatedAt: item.status?.updatedAt,
     queue: item.queue?.name ?? 'N/A',
@@ -69,7 +100,7 @@ const getProjectIdQuery = `
   }
 `
 
-export const getProjectId = async (projectNumber: number, githubToken: string, orgName: string) => {
+export const getProjectId = async (projectNumber: number, githubToken: string, orgName: string): Promise<string> => {
   const body = JSON.stringify({
     query: getProjectIdQuery,
     variables: {
@@ -114,7 +145,7 @@ export const fetchAllProjectItems = async (projectId: string, githubToken: strin
       body,
     })
 
-    const json = await res.json()
+    const json: GraphQlProjectsResponse = await res.json()
     const data = json.data.node.items
 
     allItems.push(...data.nodes)
@@ -122,8 +153,5 @@ export const fetchAllProjectItems = async (projectId: string, githubToken: strin
     after = data.pageInfo.endCursor
   }
 
-  console.log('allItems', allItems)
-
-  // @ts-expect-error - deal with it later
-  return allItems.map(mapToDTO).filter(Boolean) ?? []
+  return allItems.map(mapToDTO).filter(Boolean) as ProjectItemDTO[]
 }
