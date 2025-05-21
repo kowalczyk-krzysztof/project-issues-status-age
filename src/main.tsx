@@ -23,6 +23,7 @@ import { icon as EuiIconArrowUp } from '@elastic/eui/es/components/icon/assets/a
 import { icon as EuiIconCross } from '@elastic/eui/es/components/icon/assets/cross'
 import { icon as EuiIconTokenString } from '@elastic/eui/es/components/icon/assets/tokenString'
 import { icon as EuiIconLock } from '@elastic/eui/es/components/icon/assets/lock'
+import { icon as EuiIconSearch } from '@elastic/eui/es/components/icon/assets/search'
 
 appendIconComponentCache({
   check: EuiIconCheck,
@@ -45,6 +46,7 @@ appendIconComponentCache({
   cross: EuiIconCross,
   tokenString: EuiIconTokenString,
   lock: EuiIconLock,
+  search: EuiIconSearch,
 })
 
 createRoot(document.getElementById('root')!).render(
