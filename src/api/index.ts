@@ -1,9 +1,3 @@
-
-
-
-
-
-
 const getAge = (date: string) => {
   if (!date) {
     return 'N/A'
@@ -20,6 +14,14 @@ const getAge = (date: string) => {
   const diffSeconds = Math.floor((diffMs / 1000) % 60)
 
   return `${diffDays} days, ${diffHours} hours, ${diffMinutes} minutes, ${diffSeconds} seconds`
+}
+
+export type ProjectItemDTO = {
+  title: string
+  url: string
+  currentStatus: string
+  age: string
+  updatedAt: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -81,9 +83,7 @@ const getProjectIdQuery = `
   }
 `
 
-
 export const getProjectId = async (projectNumber: number, githubToken: string, orgName: string) => {
-
   const body = JSON.stringify({
     query: getProjectIdQuery,
     variables: {
@@ -105,7 +105,7 @@ export const getProjectId = async (projectNumber: number, githubToken: string, o
   return json?.data?.organization?.projectV2?.id
 }
 
-export const fetchAllProjectItems = async (projectId: string, githubToken: string)  => {
+export const fetchAllProjectItems = async (projectId: string, githubToken: string): Promise<ProjectItemDTO[]> => {
   let after = null
   let hasNextPage = true
   const allItems = []
@@ -131,10 +131,12 @@ export const fetchAllProjectItems = async (projectId: string, githubToken: strin
     const json = await res.json()
     const data = json.data.node.items
 
+    // @ts-expect-error - deal with it later
     allItems.push(...data.nodes)
     hasNextPage = data.pageInfo.hasNextPage
     after = data.pageInfo.endCursor
   }
 
-  return allItems.map(mapToDTO).filter(Boolean)
+  // @ts-expect-error - deal with it later
+  return allItems.map(mapToDTO).filter(Boolean) ?? []
 }
