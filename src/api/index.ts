@@ -7,8 +7,8 @@ export type ProjectItemDTO = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapToDTO = (item: any) => {
-  if (!item.content || !item.content.title || !item.content.number) {
-    // Skip or handle non-issue items
+  if (!item.content || !item.content.title || !item.content.number || item.status?.name?.includes('Done')) {
+    // Skip or handle non-issue items and done items
     return null
   }
   return {
@@ -40,7 +40,6 @@ query($projectId: ID!, $after: String) {
           queue: fieldValueByName(name: "Queue") {
             ... on ProjectV2ItemFieldSingleSelectValue {
               name
-              updatedAt
             }
           }
           content {
