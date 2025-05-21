@@ -1,4 +1,4 @@
-import { EuiSteps, EuiButton, EuiFormRow, EuiFieldText, EuiText } from '@elastic/eui'
+import { EuiSteps, EuiButton, EuiFormRow, EuiFieldText, EuiText, EuiFieldPassword } from '@elastic/eui'
 import { useState } from 'react'
 import type { ProjectItemDTO } from '../api'
 import { fetchAllProjectItems, getProjectId } from '../api'
@@ -57,7 +57,7 @@ export const Steps = ({ data, setData, setIsFetchingData, isFetchingData }: Prop
             </EuiText>
           }
           label="GitHub Token">
-          <EuiFieldText
+          <EuiFieldPassword
             onChange={(e) => {
               setGithubToken(e.target.value)
             }}
@@ -70,7 +70,7 @@ export const Steps = ({ data, setData, setIsFetchingData, isFetchingData }: Prop
       title: 'Add Project Number',
       children: (
         <EuiFormRow
-          helpText="The number at the end of the project URL (e.g 1234 in https://github.com/orgs/foo/projects/1234"
+          helpText="The number at the end of the project URL (e.g 1234 in https://github.com/orgs/foo/projects/1234)"
           label="Project Number">
           <EuiFieldText
             onChange={(e) => {
