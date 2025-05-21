@@ -14,8 +14,9 @@ const mapToDTO = (item: any) => {
   return {
     title: item.content.title,
     url: `https://github.com/${item.content.repository.nameWithOwner}/issues/${item.content.number}`,
-    currentStatus: item.fieldValueByName?.name ?? 'N/A',
-    updatedAt: item.fieldValueByName?.updatedAt,
+    currentStatus: item.status?.name ?? 'N/A',
+    updatedAt: item.status?.updatedAt,
+    queue: item.queue?.name ?? 'N/A',
   }
 }
 
@@ -30,7 +31,13 @@ query($projectId: ID!, $after: String) {
           endCursor
         }
         nodes {
-          fieldValueByName(name: "Status") {
+          status: fieldValueByName(name: "Status") {
+            ... on ProjectV2ItemFieldSingleSelectValue {
+              name
+              updatedAt
+            }
+          }
+          queue: fieldValueByName(name: "Queue") {
             ... on ProjectV2ItemFieldSingleSelectValue {
               name
               updatedAt
@@ -115,6 +122,8 @@ export const fetchAllProjectItems = async (projectId: string, githubToken: strin
     hasNextPage = data.pageInfo.hasNextPage
     after = data.pageInfo.endCursor
   }
+
+  console.log('allItems', allItems)
 
   // @ts-expect-error - deal with it later
   return allItems.map(mapToDTO).filter(Boolean) ?? []
