@@ -131,7 +131,6 @@ export const fetchAllProjectItems = async (projectId: string, githubToken: strin
     const json = await res.json()
     const data = json.data.node.items
 
-    // @ts-expect-error - deal with it later
     allItems.push(...data.nodes)
     hasNextPage = data.pageInfo.hasNextPage
     after = data.pageInfo.endCursor

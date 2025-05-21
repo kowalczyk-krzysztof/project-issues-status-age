@@ -1,5 +1,5 @@
 // .d.ts
-declare module '@elastic/eui/es/components/icon/assets/*' {
+declare module '@elastic/eui/es/components/icon/*' {
   import * as React from 'react'
   import type { SVGProps } from 'react'
   interface SVGRProps {
@@ -7,5 +7,7 @@ declare module '@elastic/eui/es/components/icon/assets/*' {
     titleId?: string
   }
   export const icon: ({ title, titleId, ...props }: SVGProps<SVGSVGElement> & SVGRProps) => React.JSX.Element
+  export const appendIconComponentCache: (icons: Record<string, React.JSXElementConstructor<SVGProps<SVGSVGElement>>>) => void
   export {}
 }
+
