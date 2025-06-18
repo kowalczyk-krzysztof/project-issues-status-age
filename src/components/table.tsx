@@ -18,8 +18,7 @@ type Props = {
 }
 
 const toCsv = (items: ProjectItemDTO[]) => {
-  const header = ['title', 'url', 'currentStatus', 'updatedAt', 'queue', 'assignees']
-  const headerString = header.join(';')
+  const headerString = columns.map((column) => column.displayAsText).join(';')
 
   const safeStringify = (value: unknown) => {
     if (value === null || value === undefined) return ''
@@ -28,7 +27,7 @@ const toCsv = (items: ProjectItemDTO[]) => {
   }
 
   // @ts-expect-error cba dealing with this
-  const rowItems = items.map((row) => header.map((fieldName) => safeStringify(row[fieldName])).join(';'))
+  const rowItems = items.map((row) => columns.map(({ id }) => safeStringify(id === 'updatedAt' ? getTime(row[id]) : row[id])).join(';'))
 
   const csv = [headerString, ...rowItems].join('\r\n')
 
