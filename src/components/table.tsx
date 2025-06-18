@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { EuiDataGrid, EuiFieldSearch, EuiFlexGroup, EuiSpacer } from '@elastic/eui'
+import { EuiButton, EuiDataGrid, EuiFieldSearch, EuiFlexGroup, EuiSpacer } from '@elastic/eui'
 import type { EuiDataGridSorting } from '@elastic/eui'
 import type { ProjectItemDTO } from '../api'
 import moment from 'moment'
@@ -15,6 +15,35 @@ const columns = [
 
 type Props = {
   data: ProjectItemDTO[]
+}
+
+const toCsv = (items: ProjectItemDTO[]) => {
+  const header = ['title', 'url', 'currentStatus', 'updatedAt', 'queue', 'assignees']
+  const headerString = header.join(';')
+
+  const safeStringify = (value: unknown) => {
+    if (value === null || value === undefined) return ''
+    if (Array.isArray(value)) return `"${value.join(', ')}"` // Format arrays nicely
+    return `"${String(value).replace(/"/g, '""')}"` // Escape quotes per CSV spec
+  }
+
+  // @ts-expect-error cba dealing with this
+  const rowItems = items.map((row) => header.map((fieldName) => safeStringify(row[fieldName])).join(';'))
+
+  const csv = [headerString, ...rowItems].join('\r\n')
+
+  // Create and trigger download
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.setAttribute('download', 'export.csv')
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+
+  return csv
 }
 
 const getTime = (date?: string) => {
@@ -70,12 +99,20 @@ export const Table = ({ data }: Props) => {
     <EuiFlexGroup
       direction="column"
       gutterSize="m">
-      <EuiFieldSearch
-        placeholder="Search..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        isClearable
-      />
+      <EuiFlexGroup>
+        <EuiFieldSearch
+          placeholder="Search..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          isClearable
+        />
+        <EuiButton
+          onClick={() => {
+            toCsv(sortedData)
+          }}>
+          Export as CSV
+        </EuiButton>
+      </EuiFlexGroup>
       <EuiSpacer size="m" />
       <EuiDataGrid
         sorting={{
