@@ -109,7 +109,8 @@ export const Table = ({ data }: Props) => {
         <EuiButton
           onClick={() => {
             toCsv(sortedData)
-          }}>
+          }}
+          disabled={!sortedData.length}>
           Export as CSV
         </EuiButton>
       </EuiFlexGroup>
