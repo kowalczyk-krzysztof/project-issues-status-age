@@ -10,6 +10,7 @@ const columns = [
   { id: 'currentStatus', displayAsText: 'Current Status' },
   { id: 'updatedAt', displayAsText: 'At this status since' },
   { id: 'queue', displayAsText: 'Queue' },
+  { id: 'assignees', displayAsText: 'Assignees' },
 ]
 
 type Props = {

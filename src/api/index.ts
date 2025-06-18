@@ -13,6 +13,12 @@ type GraphQlProjectsNode = {
       nameWithOwner: string
     }
     createdAt: string
+    assignees: {
+      nodes: Array<{
+        login: string
+        name: string
+      }>
+    }
   }
 }
 
@@ -48,6 +54,7 @@ const mapToDTO = (item: GraphQlProjectsNode) => {
     currentStatus: item.status?.name ?? 'N/A',
     updatedAt: item.status?.updatedAt,
     queue: item.queue?.name ?? 'N/A',
+    assignees: item.content?.assignees?.nodes.map((assignee) => assignee.login)?.join(', ') ?? 'N/A',
   }
 }
 
@@ -81,6 +88,12 @@ query($projectId: ID!, $after: String) {
                 nameWithOwner
               }
               createdAt
+              assignees(first: 10) {
+                nodes {
+                  login
+                  name
+                }
+              }
             }
           }
         }
