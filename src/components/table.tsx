@@ -27,6 +27,7 @@ const getTime = (date?: string) => {
   if (years) timeAgoParts.push(`${years} year${years > 1 ? 's' : ''}`)
   if (months) timeAgoParts.push(`${months} month${months > 1 ? 's' : ''}`)
   if (days) timeAgoParts.push(`${days} day${days > 1 ? 's' : ''}`)
+  if (timeAgoParts.length === 0) return 'Today'
   return timeAgoParts.join(' ') + ' ago'
 }
 

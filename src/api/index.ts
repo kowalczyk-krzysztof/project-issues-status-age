@@ -54,7 +54,7 @@ const mapToDTO = (item: GraphQlProjectsNode) => {
     currentStatus: item.status?.name ?? 'N/A',
     updatedAt: item.status?.updatedAt,
     queue: item.queue?.name ?? 'N/A',
-    assignees: item.content?.assignees?.nodes.map((assignee) => assignee.login)?.join(', ') ?? 'N/A',
+    assignees: item.content?.assignees?.nodes.length ? item.content?.assignees?.nodes.map((assignee) => assignee.login)?.join(', ') : 'N/A',
   }
 }
 
